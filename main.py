@@ -6,6 +6,9 @@ from LLM import LLM
 # Инициализация класса LLM
 llm = LLM('Simble.txt')
 
+# Счетчик обращений к LLM
+counter = 0
+
 # Инициализация FastAPI
 app = FastAPI()
 
@@ -38,6 +41,8 @@ async def sum(
     a: float = Query(..., description='Первое число для сложения'),
     b: float = Query(..., description='Второе число для сложения')
 ):
+    global counter
+    counter += 1
     return {'answer': a + b}
 
 
@@ -47,6 +52,8 @@ async def subtract(
     a: float = Query(..., description='Первое число для вычитания'),
     b: float = Query(..., description='Второе число для вычитания')
 ):
+    global counter
+    counter += 1
     return {'answer': a - b}
 
 
@@ -56,6 +63,8 @@ async def multiply(
     a: float = Query(..., description='Первое число для умножения'),
     b: float = Query(..., description='Второе число для умножения')
 ):
+    global counter
+    counter += 1
     return {'answer': a * b}
 
 
@@ -67,4 +76,13 @@ async def divide(
 ):
     if b == 0:
         raise HTTPException(status_code=400, detail='Деление на ноль')
+    global counter
+    counter += 1
     return {'answer': a / b}
+
+
+# Счетчик обращений к LLM
+@app.get('/calc/counter')
+async def get_counter():
+    global counter
+    return {'counter': counter}
